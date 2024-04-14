@@ -14,6 +14,8 @@ import { PlayIcon, ReloadIcon } from "@radix-ui/react-icons";
 import { connect, createDataItemSigner } from "@permaweb/aoconnect";
 import { Separator } from "@/components/ui/separator";
 import { Module, Scheduler } from "@/lib/ao";
+import { TExerciseData } from "@/types";
+import { toast } from "sonner";
 
 declare global {
   interface Window {
@@ -23,19 +25,9 @@ declare global {
 
 const markdownPlugins = [remarkGfm];
 
-const exerciseData = {
-  content: `
-# Hello AO!
-
-Your goal is to modify the lua code from \`print("Hello World")\` to \`print("Hello AO!")\` and run it using the process ID you created`,
-  defaultCode: `--change this
-print("Hello World")`,
-  expectedResult: `Hello AO!`,
-};
-
-export default function Layout() {
+export default function Exercise({ data }: { data: TExerciseData }) {
   const [running, setRunning] = useState(false);
-  const [currentCode, setCurrentCode] = useState(exerciseData.defaultCode);
+  const [currentCode, setCurrentCode] = useState(data.defaultCode);
   const [outputText, setOutputText] = useState("...");
   const [passed, setPassed] = useState(false);
   const [address, setAddress] = useState("");
@@ -76,6 +68,8 @@ export default function Layout() {
 
   async function spawnProcess() {
     if (processId) return;
+    if (!address)
+      return toast("Please connect wallet before spawning a process");
     setSpawning(true);
     console.log("Spawning process...");
     const r = await connect().spawn({
@@ -94,6 +88,9 @@ export default function Layout() {
   }
 
   async function runCode() {
+    if (!address) return toast("Please connect wallet before running code");
+    if (!processId) return toast("Please spawn a process before running code");
+
     setRunning(true);
     setOutputText("...");
 
@@ -113,7 +110,7 @@ export default function Layout() {
 
     console.log(data.output);
     setOutputText(data.output);
-    if (data.output == exerciseData.expectedResult) {
+    if (data.output == data.expectedResult) {
       setPassed(true);
     } else {
       setPassed(false);
@@ -139,9 +136,7 @@ export default function Layout() {
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel maxSize={45} minSize={15} className="p-3">
           {/* <div className="text-center text-3xl p-4 pb-7">Hello AO!</div> */}
-          <Markdown remarkPlugins={markdownPlugins}>
-            {exerciseData.content}
-          </Markdown>
+          <Markdown remarkPlugins={markdownPlugins}>{data.content}</Markdown>
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel>
@@ -156,7 +151,7 @@ export default function Layout() {
                   fontSize: 16,
                   wordWrap: "on",
                 }}
-                defaultValue={exerciseData.defaultCode}
+                defaultValue={data.defaultCode}
                 onChange={(v) => v && setCurrentCode(v)}
               />
             </ResizablePanel>
