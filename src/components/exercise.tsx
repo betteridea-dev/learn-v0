@@ -16,6 +16,8 @@ import { Separator } from "@/components/ui/separator";
 import { Module, Scheduler } from "@/lib/ao";
 import { TExerciseData } from "@/types";
 import { toast } from "sonner";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 declare global {
   interface Window {
@@ -33,6 +35,15 @@ export default function Exercise({ data }: { data: TExerciseData }) {
   const [address, setAddress] = useState("");
   const [processId, setProcessId] = useState("");
   const [spawning, setSpawning] = useState(false);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    // console.log(router.query);
+    setCurrentCode(data.defaultCode);
+    setPassed(false);
+    setOutputText("...");
+  }, [router.query]);
 
   useEffect(() => {
     if (window) {
@@ -106,11 +117,9 @@ export default function Exercise({ data }: { data: TExerciseData }) {
       process: processId,
     });
 
-    const { data } = Output;
-
-    console.log(data.output);
-    setOutputText(data.output);
-    if (data.output == data.expectedResult) {
+    console.log(Output.data.output);
+    setOutputText(Output.data.output);
+    if (Output.data.output == data.expectedResult) {
       setPassed(true);
     } else {
       setPassed(false);
@@ -121,7 +130,7 @@ export default function Exercise({ data }: { data: TExerciseData }) {
   return (
     <div className="h-screen flex flex-col">
       <div className="p-2 px-3 flex justify-between items-center">
-        <div>Learn AO DAO</div>
+        <Link href="/">Learn AO DAO</Link>
         <div>
           <Button variant="link" onClick={spawnProcess} disabled={spawning}>
             {spawning ? <ReloadIcon className="mr-2 animate-spin" /> : null}
@@ -135,8 +144,30 @@ export default function Exercise({ data }: { data: TExerciseData }) {
       <Separator />
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel maxSize={45} minSize={15} className="p-3">
-          {/* <div className="text-center text-3xl p-4 pb-7">Hello AO!</div> */}
+          <div className="text-center text-3xl p-4 pb-7">{data.title}</div>
           <Markdown remarkPlugins={markdownPlugins}>{data.content}</Markdown>
+          <div className="flex justify-between p-2 items-center">
+            <Button
+              variant="outline"
+              onClick={() => router.replace(`/${data.prevRoute}`)}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                const nextable =
+                  typeof data.allowNext == "boolean" ? data.allowNext : passed;
+                if (!nextable)
+                  return toast(
+                    "You need to complete the exercise to proceed :p",
+                  );
+                router.replace(`/${data.nextRoute}`);
+              }}
+            >
+              Next
+            </Button>
+          </div>
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel>
@@ -151,6 +182,7 @@ export default function Exercise({ data }: { data: TExerciseData }) {
                   fontSize: 16,
                   wordWrap: "on",
                 }}
+                value={currentCode}
                 defaultValue={data.defaultCode}
                 onChange={(v) => v && setCurrentCode(v)}
               />
