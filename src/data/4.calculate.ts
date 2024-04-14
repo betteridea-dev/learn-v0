@@ -6,7 +6,7 @@ export default {
   content: `
 Just like we printed something before, we can also do mathematical operations on AO using LUA
 
-## TASK
+# TASK
 
 Your task is to find out the solution of the following equation:
 

@@ -145,7 +145,9 @@ export default function Exercise({ data }: { data: TExerciseData }) {
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel maxSize={45} minSize={15} className="p-3">
           <div className="text-center text-3xl p-4 pb-7">{data.title}</div>
-          <Markdown remarkPlugins={markdownPlugins}>{data.content}</Markdown>
+          <Markdown className="markdown" remarkPlugins={markdownPlugins}>
+            {data.content}
+          </Markdown>
           <div className="flex justify-between p-2 items-center">
             <Button
               variant="outline"
