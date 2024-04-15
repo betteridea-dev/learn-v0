@@ -4,7 +4,7 @@ export default {
   prevRoute: "10-connect-wallet",
   route: "20-spawn-process",
   nextRoute: "30-hello-ao",
-  title: "Time to bootup a process!",
+  title: "Time to bootup a process! 💡",
   content: `
 A process in AO is like a smart contract that's alive.
 

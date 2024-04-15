@@ -3,7 +3,7 @@ import { TExerciseData } from "@/types";
 export default {
   prevRoute: "50-variables",
   route: "60-messaging",
-  nextRoute: "70-my-inbox",
+  nextRoute: "70-morpheus",
   title: "Sending Messages 💬",
   content: `
 Now that you know how to print stuff, do basic calculations and make variables,

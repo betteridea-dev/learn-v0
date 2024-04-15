@@ -1,9 +1,9 @@
 import { TExerciseData } from "@/types";
 
 export default {
+  prevRoute: "70-morpheus",
+  route: "80-my-inbox",
   nextRoute: "/",
-  route: "70-my-inbox",
-  prevRoute: "60-messaging",
   title: "Checking Inbox 📥",
   content: `
 So we know how to send messages, but how do we check what messages we have received?

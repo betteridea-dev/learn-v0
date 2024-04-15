@@ -4,7 +4,7 @@ export default {
   prevRoute: "30-hello-ao",
   route: "40-calculate",
   nextRoute: "50-variables",
-  title: "Let's Calculate!",
+  title: "Let's Calculate! 🧮",
   content: `
 Just like we printed something before, we can also do mathematical operations on AO using LUA
 
