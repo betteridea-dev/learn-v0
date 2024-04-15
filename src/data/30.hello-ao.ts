@@ -1,7 +1,9 @@
 import { TExerciseData } from "@/types";
 
 export default {
-  route: "3-hello-ao",
+  prevRoute: "20-spawn-process",
+  route: "30-hello-ao",
+  nextRoute: "40-calculate",
   title: "Hello AO!",
   content: `
 
@@ -17,6 +19,5 @@ Your goal is to modify the lua code from \`print("Hello World")\` to \`print("He
   defaultCode: `--change this
 print("Hello World")`,
   expectedResult: "Hello AO!",
-  nextRoute: "4-calculate",
-  prevRoute: "2-spawn-process",
+  runLua: false,
 } as TExerciseData;

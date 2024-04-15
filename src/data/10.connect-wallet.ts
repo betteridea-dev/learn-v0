@@ -1,7 +1,9 @@
 import { TExerciseData } from "@/types";
 
 export default {
-  route: "1-connect-wallet",
+  prevRoute: "/",
+  route: "10-connect-wallet",
+  nextRoute: "20-spawn-process",
   title: "Welcome Human 👋",
   content: `
 In your first exercise, you will be connecting your wallet to this web application.
@@ -19,7 +21,6 @@ password and allow the wallet to connect to this page.
 `,
   defaultCode: `-- You will be writing lua code here soon ;)`,
   expectedResult: ``,
+  runLua: false,
   allowNext: true,
-  nextRoute: "2-spawn-process",
-  prevRoute: "/",
 } as TExerciseData;

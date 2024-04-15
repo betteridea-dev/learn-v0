@@ -1,7 +1,9 @@
 import { TExerciseData } from "@/types";
 
 export default {
-  route: "4-calculate",
+  prevRoute: "30-hello-ao",
+  route: "40-calculate",
+  nextRoute: "50-variables",
   title: "Let's Calculate!",
   content: `
 Just like we printed something before, we can also do mathematical operations on AO using LUA
@@ -12,7 +14,7 @@ Just like we printed something before, we can also do mathematical operations on
 Your task is to find out the solution of the following equation:
 
 ~~~
-(6×7)−(12÷2)+(9×2)-12
+(6×7)-(12÷2)+(9×2)-12
 ~~~
 
 ---
@@ -21,6 +23,5 @@ Hint: Just type this expression with code compatible characters
 `,
   defaultCode: "1+1",
   expectedResult: `42`,
-  nextRoute: "5-messaging",
-  prevRoute: "3-hello-ao",
+  runLua: false,
 } as TExerciseData;

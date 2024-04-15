@@ -1,7 +1,9 @@
 import { TExerciseData } from "@/types";
 
 export default {
-  route: "2-spawn-process",
+  prevRoute: "10-connect-wallet",
+  route: "20-spawn-process",
+  nextRoute: "30-hello-ao",
   title: "Time to bootup a process!",
   content: `
 A process in AO is like a smart contract that's alive.
@@ -21,7 +23,6 @@ Once the process id appears, you may move to the next exercise
 `,
   defaultCode: `-- You will be writing lua code here soon ;)`,
   expectedResult: ``,
+  runLua: false,
   allowNext: true,
-  nextRoute: "3-hello-ao",
-  prevRoute: "1-connect-wallet",
 } as TExerciseData;

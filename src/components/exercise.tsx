@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/resizable";
 import { Separator } from "@/components/ui/separator";
 import { Module, Scheduler } from "@/lib/ao";
-import { TExerciseData } from "@/types";
+import { TExerciseData, TExpectedResult } from "@/types";
 import Editor from "@monaco-editor/react";
 import { connect, createDataItemSigner } from "@permaweb/aoconnect";
 import { PlayIcon, ReloadIcon } from "@radix-ui/react-icons";
@@ -38,6 +38,7 @@ export default function Exercise({ data }: { data: TExerciseData }) {
   const [spawning, setSpawning] = useState(false);
   const [intrvl, setIntrvl] = useState<any>(0);
   const [firstRun, setFirstRun] = useState(true);
+  const [confirming, setConfirming] = useState(false);
 
   const router = useRouter();
 
@@ -90,6 +91,7 @@ export default function Exercise({ data }: { data: TExerciseData }) {
     // console.log(router.query);
     setCurrentCode(data.defaultCode);
     setPassed(false);
+    setFirstRun(true);
     setOutputText("...");
   }, [router.query]);
 
@@ -151,9 +153,10 @@ export default function Exercise({ data }: { data: TExerciseData }) {
     if (!processId) return toast("Please spawn a process before running code");
 
     setRunning(true);
+    setFirstRun(false);
     setOutputText("...");
 
-    const old_ts = new Date().getTime();
+    const old_ts = Date.parse(new Date().toUTCString()) / 1000;
     const r = await connect().message({
       process: processId,
       data: currentCode,
@@ -166,14 +169,17 @@ export default function Exercise({ data }: { data: TExerciseData }) {
       process: processId,
     });
 
-    setOutputText(Output.data.output);
-    if (data.checkInbox) {
+    console.log("code result:", Output)
+
+    const codeResult = Output.data.json == "undefined" ? Output.data.output : Output.data.json;
+    setOutputText(codeResult);
+    if (data.runLua) {
+      setConfirming(true);
       //check inbox for message output after 5s
       setTimeout(async () => {
         const r = await connect().message({
           process: processId,
-          data: `json = require('json')
-        return json.encode(Inbox[#Inbox])`,
+          data: (data.expectedResult as TExpectedResult).run,
           signer: createDataItemSigner(window.arweaveWallet),
           tags: [{ name: "Action", value: "Eval" }],
         });
@@ -183,15 +189,30 @@ export default function Exercise({ data }: { data: TExerciseData }) {
           process: processId,
         });
 
-        const message = JSON.parse(Output.data.output);
-        const new_ts = message.Timestamp;
-        const valid = new_ts - old_ts > 0;
-        const from = data.fromId == "SELF" ? processId : data.fromId;
-        console.log(message);
-        setPassed(
-          message.Data == data.expectedResult && message.From == from && valid,
-        );
+        console.log("run lua result: ", Output)
+        const luaOutput = Output.data.output
+        try {
+          const message = Output.data.json || JSON.parse(luaOutput);
+          const new_ts = parseInt((message.Timestamp / 1000).toString());
+          const valid = new_ts - old_ts > 0;
+          // console.log(new_ts, old_ts, new_ts - old_ts)
+          const from = data.fromId == "SELF" ? processId : data.fromId;
+          console.log("lua message :", message);
+
+          const passVal = (
+            message.From == from &&
+            (!data.validateTimestamp || valid) &&
+            (message.Data == (data.expectedResult as TExpectedResult).out ||
+              message.Data == codeResult)
+          )
+
+          setPassed(passVal);
+        } catch {
+          console.log(luaOutput);
+          // if (luaOutput == data.expectedResult.out)
+        }
         setRunning(false);
+        setConfirming(false);
       }, 5000);
     } else {
       setPassed(Output.data.output == data.expectedResult);
@@ -226,7 +247,7 @@ export default function Exercise({ data }: { data: TExerciseData }) {
           <div className="flex justify-between p-2 items-center">
             <Button
               variant="outline"
-              onClick={() => router.replace(`/${data.prevRoute}`)}
+              onClick={() => router.push(`/${data.prevRoute}`)}
             >
               Previous
             </Button>
@@ -242,7 +263,7 @@ export default function Exercise({ data }: { data: TExerciseData }) {
                   return toast(
                     "You need to complete the exercise to proceed :p",
                   );
-                router.replace(`/${data.nextRoute}`);
+                router.push(`/${data.nextRoute}`);
               }}
             >
               Next
@@ -252,8 +273,8 @@ export default function Exercise({ data }: { data: TExerciseData }) {
         <ResizableHandle />
         <ResizablePanel>
           <ResizablePanelGroup direction="vertical">
-            <ResizablePanel maxSize={80} className="p-3">
-              Code Editor
+            <ResizablePanel maxSize={80} className="p-0">
+              <div className="p-2 px-4">LUA Editor</div>
               <Editor
                 language="lua"
                 theme="vs-dark"
@@ -261,6 +282,7 @@ export default function Exercise({ data }: { data: TExerciseData }) {
                   minimap: { enabled: false },
                   fontSize: 16,
                   wordWrap: "on",
+                  scrollBeyondLastLine: false,
                 }}
                 value={currentCode}
                 defaultValue={data.defaultCode}
@@ -268,10 +290,10 @@ export default function Exercise({ data }: { data: TExerciseData }) {
               />
             </ResizablePanel>
             <ResizableHandle />
-            <ResizablePanel maxSize={70} className="p-3">
-              <div className="flex justify-between">
-                <div>
-                  Output {!running ? <>{passed ? "✅" : "❌"}</> : null}{" "}
+            <ResizablePanel maxSize={70} className="">
+              <div className="flex justify-between items-center p-2">
+                <div className="px-2">
+                  Output {!running && !firstRun ? <>{passed ? "✅" : "❌"}</> : null}{" "}
                 </div>
                 <Button variant="ghost" disabled={running} onClick={runCode}>
                   {running ? (
@@ -279,13 +301,13 @@ export default function Exercise({ data }: { data: TExerciseData }) {
                   ) : (
                     <PlayIcon className="mr-2" />
                   )}
-                  {running ? "Running..." : "Run Code"}
+                  {confirming ? "Validating..." : <>{running ? "Running..." : "Run Code"}</>}
                 </Button>
               </div>
               <pre
-                className={`ring-1 p-1 px-2 ring-white/10 min-h-[10vh] max-h-[66vh] ${passed ? "text-green-200" : "text-red-200"}`}
+                className={`ring-1 background-transparent p-1 px-2 ring-white/10 min-h-[10vh] max-h-[55vh] overflow-scroll ${passed ? "text-green-200" : "text-white"}`}
               >
-                {outputText}
+                {typeof outputText == 'string' ? outputText : JSON.stringify(outputText, null, 2)}
               </pre>
             </ResizablePanel>
           </ResizablePanelGroup>

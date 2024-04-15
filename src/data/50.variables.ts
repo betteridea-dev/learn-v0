@@ -1,7 +1,9 @@
 import { TExerciseData } from "@/types";
 
 export default {
-  route: "5-variables",
+  prevRoute: "40-calculate",
+  route: "50-variables",
+  nextRoute: "60-messaging",
   title: "Variables 📦",
   content: `
 Variables are used to store data that can be used later in the program.
@@ -29,6 +31,5 @@ Your task is to fix the variable Name so that it contains the correct name "Elon
   defaultCode: `Name = "Melon Musk"
 return Name`,
   expectedResult: `Elon Musk`,
-  nextRoute: "6-messaging",
-  prevRoute: "4-calculate",
+  runLua: false,
 } as TExerciseData;

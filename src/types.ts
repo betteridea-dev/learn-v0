@@ -1,3 +1,8 @@
+export interface TExpectedResult {
+  run: string;
+  out: string;
+}
+
 export interface TExerciseData {
   route: string;
   nextRoute: string;
@@ -5,8 +10,9 @@ export interface TExerciseData {
   title: string;
   content: string;
   defaultCode: string;
-  expectedResult: string;
+  expectedResult: string | TExpectedResult
   allowNext?: boolean;
-  checkInbox?: boolean;
+  runLua?: boolean;
   fromId: "SELF" | string;
+  validateTimestamp?: boolean;
 }

@@ -1,7 +1,9 @@
 import { TExerciseData } from "@/types";
 
 export default {
-  route: "6-messaging",
+  prevRoute: "50-variables",
+  route: "60-messaging",
+  nextRoute: "70-my-inbox",
   title: "Sending Messages 💬",
   content: `
 Now that you know how to print stuff, do basic calculations and make variables,
@@ -36,9 +38,11 @@ You can either copy and paste the process ID as a string or use the global varia
   Target = "process ID",
   Data = "Hello World!"
 })`,
-  expectedResult: `Hello World!`,
-  checkInbox: true,
+  expectedResult: {
+    run: `Inbox[#Inbox]`,
+    out: "Hello World!",
+  },
+  runLua: true,
   fromId: "SELF",
-  nextRoute: "#",
-  prevRoute: "4-calculate",
+  validateTimestamp: true,
 } as TExerciseData;
