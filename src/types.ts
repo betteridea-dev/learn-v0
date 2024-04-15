@@ -7,4 +7,6 @@ export interface TExerciseData {
   defaultCode: string;
   expectedResult: string;
   allowNext?: boolean;
+  checkInbox?: boolean;
+  fromId: "SELF" | string;
 }

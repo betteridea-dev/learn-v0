@@ -1,23 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { Button } from "@/components/ui/button";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import Editor from "@monaco-editor/react";
-import { PlayIcon, ReloadIcon } from "@radix-ui/react-icons";
-import { connect, createDataItemSigner } from "@permaweb/aoconnect";
 import { Separator } from "@/components/ui/separator";
 import { Module, Scheduler } from "@/lib/ao";
 import { TExerciseData } from "@/types";
-import { toast } from "sonner";
-import { useRouter } from "next/router";
+import Editor from "@monaco-editor/react";
+import { connect, createDataItemSigner } from "@permaweb/aoconnect";
+import { PlayIcon, ReloadIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { toast } from "sonner";
+import Ansi from "ansi-to-react";
 
 declare global {
   interface Window {
@@ -35,8 +36,55 @@ export default function Exercise({ data }: { data: TExerciseData }) {
   const [address, setAddress] = useState("");
   const [processId, setProcessId] = useState("");
   const [spawning, setSpawning] = useState(false);
+  const [intrvl, setIntrvl] = useState<any>(0);
+  const [firstRun, setFirstRun] = useState(true);
 
   const router = useRouter();
+
+  useEffect(() => {
+    if (!processId) return;
+    if (!window) return;
+    clearInterval(intrvl);
+    setIntrvl(
+      setInterval(async () => {
+        await connect()
+          .results({
+            process: processId,
+            from: localStorage.getItem("cursor") || "",
+            sort: "DESC",
+            limit: 25,
+          })
+          .then((r) => {
+            // console.log("checking inbox", r.edges);
+            if (r.edges.length > 0) {
+              r.edges.forEach((e: any) => {
+                const isPrint = e.node.Output.print;
+                const d = e.node.Output.data;
+                // console.log(d);
+                isPrint &&
+                  localStorage.getItem("cursor") &&
+                  typeof d == "string" &&
+                  toast(
+                    <Ansi className="bg-transparent p-1">
+                      {d.replace("34m", "37m")}
+                    </Ansi>,
+                  );
+                // if (!isPrint) {
+                //   try {
+                //     const messageData = e.node.Messages[0].Data;
+                //     console.log(messageData);
+                //   } catch {
+                //     console.log("No message data");
+                //   }
+                // }
+              });
+              window && localStorage.setItem("cursor", r.edges[0].cursor);
+            }
+          });
+      }, 2500),
+    );
+    return () => clearInterval(intrvl);
+  }, [processId]);
 
   useEffect(() => {
     // console.log(router.query);
@@ -105,6 +153,7 @@ export default function Exercise({ data }: { data: TExerciseData }) {
     setRunning(true);
     setOutputText("...");
 
+    const old_ts = new Date().getTime();
     const r = await connect().message({
       process: processId,
       data: currentCode,
@@ -117,14 +166,37 @@ export default function Exercise({ data }: { data: TExerciseData }) {
       process: processId,
     });
 
-    console.log(Output.data.output);
     setOutputText(Output.data.output);
-    if (Output.data.output == data.expectedResult) {
-      setPassed(true);
+    if (data.checkInbox) {
+      //check inbox for message output after 5s
+      setTimeout(async () => {
+        const r = await connect().message({
+          process: processId,
+          data: `json = require('json')
+        return json.encode(Inbox[#Inbox])`,
+          signer: createDataItemSigner(window.arweaveWallet),
+          tags: [{ name: "Action", value: "Eval" }],
+        });
+
+        const { Output } = await connect().result({
+          message: r,
+          process: processId,
+        });
+
+        const message = JSON.parse(Output.data.output);
+        const new_ts = message.Timestamp;
+        const valid = new_ts - old_ts > 0;
+        const from = data.fromId == "SELF" ? processId : data.fromId;
+        console.log(message);
+        setPassed(
+          message.Data == data.expectedResult && message.From == from && valid,
+        );
+        setRunning(false);
+      }, 5000);
     } else {
-      setPassed(false);
+      setPassed(Output.data.output == data.expectedResult);
+      setRunning(false);
     }
-    setRunning(false);
   }
 
   return (
@@ -145,7 +217,10 @@ export default function Exercise({ data }: { data: TExerciseData }) {
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel maxSize={45} minSize={15} className="p-3">
           <div className="text-center text-3xl p-4 pb-7">{data.title}</div>
-          <Markdown className="markdown" remarkPlugins={markdownPlugins}>
+          <Markdown
+            className="markdown overflow-scroll max-h-[73vh]"
+            remarkPlugins={markdownPlugins}
+          >
             {data.content}
           </Markdown>
           <div className="flex justify-between p-2 items-center">
@@ -156,6 +231,9 @@ export default function Exercise({ data }: { data: TExerciseData }) {
               Previous
             </Button>
             <Button
+              disabled={
+                typeof data.allowNext == "boolean" ? !data.allowNext : !passed
+              }
               variant="outline"
               onClick={() => {
                 const nextable =
@@ -193,8 +271,7 @@ export default function Exercise({ data }: { data: TExerciseData }) {
             <ResizablePanel maxSize={70} className="p-3">
               <div className="flex justify-between">
                 <div>
-                  Output{" "}
-                  {outputText != "..." ? <>{passed ? "✅" : "❌"}</> : null}{" "}
+                  Output {!running ? <>{passed ? "✅" : "❌"}</> : null}{" "}
                 </div>
                 <Button variant="ghost" disabled={running} onClick={runCode}>
                   {running ? (
