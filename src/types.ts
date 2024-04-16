@@ -13,6 +13,6 @@ export interface TExerciseData {
   expectedResult: string | TExpectedResult
   allowNext?: boolean;
   runLua?: boolean;
-  fromId: "SELF" | string;
+  fromId?: "SELF" | string;
   validateTimestamp?: boolean;
 }

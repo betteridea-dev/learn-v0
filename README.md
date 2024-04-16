@@ -1,40 +1,110 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Learn AO with BetterIDEa
 
-## Getting Started
+This is a platform for learning AO, it consists of a series of interactive exercises to help you learn AO.
 
-First, run the development server:
+## Adding more exercises
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+To add more exercises, you need to create a new file in `src/data` folder with the filename `<number>.<name>.ts`
+
+The ts file should contain a default export object of type `TExerciseData`
+
+and its endpoint route must be added to the object in `data/index.ts`
+
+
+<details>
+<summary>TExerciseData</summary>
+
+```ts
+export interface TExerciseData {
+  route: string;
+  nextRoute: string;
+  prevRoute: string;
+  title: string;
+  content: string;
+  defaultCode: string;
+  expectedResult: string | TExpectedResult
+  runLua?: boolean;
+  allowNext?: boolean;
+  fromId?: "SELF" | string;
+  validateTimestamp?: boolean;
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+</details>
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+| Field             | Description                                                                                                                          | Type                      | Required | Example Values                                                                                   |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------- | -------- | ------------------------------------------------------------------------------------------------ |
+| prevRoute         | endpoint for the previous exercise (value must exist in the data/index.ts file)                                                      | string                    | true     | "10-connect-wallet"                                                                              |
+| route             | endpoint for the current exercise (value must exist in the data/index.ts file)                                                       | string                    | true     | "20-create-wallet"                                                                               |
+| nextRoute         | endpoint for the next exercise (value must exist in the data/index.ts file)                                                          | string                    | true     | "30-create-asset"                                                                                |
+| title             | title of the exercise                                                                                                                | string                    | true     | "Create a wallet"                                                                                |
+| content           | markdown supported description of the exercise                                                                                       | string                    | true     | "# Markdown"                                                                                     |
+| defaultCode       | default boilerplate code for the exercise                                                                                            | string                    | true     | "print('Hello World')"                                                                           |
+| expectedResult*   | expected result of the exercise (either a string or an object)                                                                       | string or TExpectedResult | true     | "Hello World" or `{ run:"print('Hello World')", "Hello World" }` or `{run:"Inbox[#Inbox].Data"}` |
+| runLua            | boolean to decide wether to check output by running some lua code (must always be true if expectedResult is of type TExpectedResult) | boolean                   | false    | true                                                                                             |
+|                   |
+| allowNext         | boolean that allows moving to the next exercise by default                                                                           | boolean                   | false    | true                                                                                             |
+| fromId            | In case we are checking if we have received an Inbox message from a particular process (SELF if we are sending it to ao.id)          | "SELF" or string          | false    | "<process if>" or "SELF"                                                                         |
+| validateTimestamp | To check if an Inbox message was received after running the exercise code (compares timestamps)                                      | boolean                   | false    | true                                                                                             |
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+*expectedResult can be a string or an object
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+<details>
+<summary>TExpectedResult</summary>
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```ts
+type TExpectedResult = string | {
+  run: string;
+  out?: string;
+};
+```
 
-## Learn More
+</details>
 
-To learn more about Next.js, take a look at the following resources:
+| Field | Description                                                                                                                                                                      | Type   | Required | Example Values          |
+| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | -------- | ----------------------- |
+| run   | lua code to run to get the expected result                                                                                                                                       | string | true     | "print('Hello World!')" |
+| out   | If declared, will check if the output of the run field is equal to this value, else will compare the lua output with the output of the code the user has written in the exercise | string | optional | "Hello World!"          |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+After creating an object you need to add it to the `data/index.ts` file
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+<details>
+<summary>Your exercise file</summary>
 
-## Deploy on Vercel
+```ts
+import { TExerciseData } from "@/types";
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+export default {
+  prevRoute:...,
+  route:...,
+  nextRoute:...,
+  .
+  .
+  .
+} as TExerciseData;
+```
+</details>
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+<details>
+<summary>data/index.ts</summary>
+
+```ts
+import { TExerciseData } from "@/types";
+
+export default {
+  "10-connect-wallet": require("@/data/10.connect-wallet").default,
+  "20-spawn-process": require("@/data/20.spawn-process").default,
+  "30-hello-ao": require("@/data/30.hello-ao").default,
+  .
+  .
+  .
+  "<your-route>": require("@/data/<your-exercise-file").default,
+} as { [foo: string]: TExerciseData };
+```
+
+**IMPORTANT NOTES:**
+
+1. Make sure the route in your exercise file and the key in the data/index.ts file are the same.
+2. Make sure the prevRoute, route, and nextRoute in your exercise file exist in the keys of the index files exported object.
+3. Make sure the route in your exercise file is unique.
+4. The exercises are spaced by 10s, so there is a possibility to add more exercises between the existing ones if needed (All hail QBASIC programming) Make sure you follow the same pattern.
