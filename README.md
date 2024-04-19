@@ -10,7 +10,6 @@ The ts file should contain a default export object of type `TExerciseData`
 
 and its endpoint route must be added to the object in `data/index.ts`
 
-
 <details>
 <summary>TExerciseData</summary>
 
@@ -22,7 +21,7 @@ export interface TExerciseData {
   title: string;
   content: string;
   defaultCode: string;
-  expectedResult: string | TExpectedResult
+  expectedResult: string | TExpectedResult;
   runLua?: boolean;
   allowNext?: boolean;
   fromId?: "SELF" | string;
@@ -40,23 +39,24 @@ export interface TExerciseData {
 | title             | title of the exercise                                                                                                                | string                    | true     | "Create a wallet"                                                                                |
 | content           | markdown supported description of the exercise                                                                                       | string                    | true     | "# Markdown"                                                                                     |
 | defaultCode       | default boilerplate code for the exercise                                                                                            | string                    | true     | "print('Hello World')"                                                                           |
-| expectedResult*   | expected result of the exercise (either a string or an object)                                                                       | string or TExpectedResult | true     | "Hello World" or `{ run:"print('Hello World')", "Hello World" }` or `{run:"Inbox[#Inbox].Data"}` |
+| expectedResult\*  | expected result of the exercise (either a string or an object)                                                                       | string or TExpectedResult | true     | "Hello World" or `{ run:"print('Hello World')", "Hello World" }` or `{run:"Inbox[#Inbox].Data"}` |
 | runLua            | boolean to decide wether to check output by running some lua code (must always be true if expectedResult is of type TExpectedResult) | boolean                   | false    | true                                                                                             |
-|                   |
 | allowNext         | boolean that allows moving to the next exercise by default                                                                           | boolean                   | false    | true                                                                                             |
 | fromId            | In case we are checking if we have received an Inbox message from a particular process (SELF if we are sending it to ao.id)          | "SELF" or string          | false    | "<process if>" or "SELF"                                                                         |
 | validateTimestamp | To check if an Inbox message was received after running the exercise code (compares timestamps)                                      | boolean                   | false    | true                                                                                             |
 
-*expectedResult can be a string or an object
+\*expectedResult can be a string or an object
 
 <details>
 <summary>TExpectedResult</summary>
 
 ```ts
-type TExpectedResult = string | {
-  run: string;
-  out?: string;
-};
+type TExpectedResult =
+  | string
+  | {
+      run: string;
+      out?: string;
+    };
 ```
 
 </details>
@@ -83,6 +83,7 @@ export default {
   .
 } as TExerciseData;
 ```
+
 </details>
 
 <details>
