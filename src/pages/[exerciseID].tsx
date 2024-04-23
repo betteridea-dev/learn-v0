@@ -1,25 +1,11 @@
 "use client";
 
-import { useRouter } from "next/router";
 import data from "@/data";
 import Exercise from "@/components/exercise";
-import exp from "constants";
 import { TExerciseData } from "@/types";
 import { GetStaticPathsContext, GetStaticPropsContext } from "next";
 
-export default function ExercisePage({
-  excercise,
-}: {
-  excercise: TExerciseData;
-}) {
-  // const router = useRouter();
-  // const exerciseID = router.query.exerciseID as string;
-
-  // if (!exerciseID) return <div>Loading...</div>;
-  // if (!Object.keys(data).includes(exerciseID)) router.push("/");
-
-  // const exercise = data[exerciseID];
-
+export default function ExercisePage({ excercise }: { excercise: TExerciseData }) {
   return <Exercise data={excercise} />;
 }
 
