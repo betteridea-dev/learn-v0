@@ -1,11 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Separator } from "@/components/ui/separator";
 import { Module, Scheduler } from "@/lib/ao";
 import { TExerciseData, TExpectedResult } from "@/types";
@@ -23,12 +19,14 @@ import Ansi from "ansi-to-react";
 declare global {
   interface Window {
     arweaveWallet: any;
+    othentWallet: any;
   }
 }
 
 const markdownPlugins = [remarkGfm];
 
 export default function Exercise({ data }: { data: TExerciseData }) {
+  const [wallet, setWallet] = useState<any>(undefined);
   const [running, setRunning] = useState(false);
   const [currentCode, setCurrentCode] = useState(data.defaultCode);
   const [outputText, setOutputText] = useState("...");
@@ -62,14 +60,7 @@ export default function Exercise({ data }: { data: TExerciseData }) {
                 const isPrint = e.node.Output.print;
                 const d = e.node.Output.data;
                 // console.log(d);
-                isPrint &&
-                  localStorage.getItem("cursor") &&
-                  typeof d == "string" &&
-                  toast(
-                    <Ansi className="bg-transparent p-1">
-                      {d.replace("34m", "37m")}
-                    </Ansi>,
-                  );
+                isPrint && localStorage.getItem("cursor") && typeof d == "string" && toast(<Ansi className="bg-transparent p-1">{d.replace("34m", "37m")}</Ansi>);
                 // if (!isPrint) {
                 //   try {
                 //     const messageData = e.node.Messages[0].Data;
@@ -97,46 +88,55 @@ export default function Exercise({ data }: { data: TExerciseData }) {
 
   useEffect(() => {
     if (window) {
-      window.arweaveWallet = window.arweaveWallet || {};
+      if (wallet) return;
+      // import * as arweaveWallet from "@othent/kms";
+      const arw = require("@othent/kms");
+      window.othentWallet = arw;
+      setWallet(arw);
+      arw.connect();
 
-      try {
-        getWalletAddress();
-      } catch (e) {
-        console.log("No wallet connected");
-      }
-
-      const pid = localStorage.getItem("processId");
-      if (pid) setProcessId(pid);
+      // try {
+      //   // getWalletAddress();
+      //   const adr = arw.getActiveAddress();
+      //   const pid = localStorage.getItem("processId");
+      //   if (pid) setProcessId(pid);
+      // } catch (e) {
+      //   console.log("No wallet connected");
+      // }
     }
   }, []);
 
   async function getWalletAddress() {
-    const addr = await window.arweaveWallet.getActiveAddress();
+    if (typeof wallet == "undefined") return;
+    const addr = await wallet.getActiveAddress();
     setAddress(addr);
   }
 
   async function connectWallet() {
+    if (typeof window == "undefined") return;
+    if (typeof wallet == "undefined") return;
     try {
-      await window.arweaveWallet.getActiveAddress();
+      const r = await wallet.getActiveAddress();
+      console.log(r);
+      setAddress(r);
+      const pid = localStorage.getItem("processId");
+      if (pid) setProcessId(pid);
     } catch (e) {
-      await window.arweaveWallet.connect([
-        "SIGN_TRANSACTION",
-        "ACCESS_ADDRESS",
-      ]);
+      // await wallet.connect(["SIGN_TRANSACTION", "ACCESS_ADDRESS"]);
+      await wallet.connect();
       getWalletAddress();
     }
   }
 
   async function spawnProcess() {
     if (processId) return;
-    if (!address)
-      return toast("Please connect wallet before spawning a process");
+    if (!address) return toast("Please connect wallet before spawning a process");
     setSpawning(true);
     console.log("Spawning process...");
     const r = await connect().spawn({
       module: Module,
       scheduler: Scheduler,
-      signer: createDataItemSigner(window.arweaveWallet),
+      signer: createDataItemSigner(wallet),
       tags: [],
       data: "",
     });
@@ -160,7 +160,7 @@ export default function Exercise({ data }: { data: TExerciseData }) {
     const r = await connect().message({
       process: processId,
       data: currentCode,
-      signer: createDataItemSigner(window.arweaveWallet),
+      signer: createDataItemSigner(wallet),
       tags: [{ name: "Action", value: "Eval" }],
     });
 
@@ -169,7 +169,7 @@ export default function Exercise({ data }: { data: TExerciseData }) {
       process: processId,
     });
 
-    console.log("code result:", Output)
+    console.log("code result:", Output);
 
     const codeResult = Output.data.json == "undefined" ? Output.data.output : Output.data.json;
     setOutputText(codeResult);
@@ -180,7 +180,7 @@ export default function Exercise({ data }: { data: TExerciseData }) {
         const r = await connect().message({
           process: processId,
           data: (data.expectedResult as TExpectedResult).run,
-          signer: createDataItemSigner(window.arweaveWallet),
+          signer: createDataItemSigner(wallet),
           tags: [{ name: "Action", value: "Eval" }],
         });
 
@@ -189,8 +189,8 @@ export default function Exercise({ data }: { data: TExerciseData }) {
           process: processId,
         });
 
-        console.log("run lua result: ", Output)
-        const luaOutput = Output.data.output
+        console.log("run lua result: ", Output);
+        const luaOutput = Output.data.output;
         try {
           const message = Output.data.json || JSON.parse(luaOutput);
           const new_ts = parseInt((message.Timestamp / 1000).toString());
@@ -199,12 +199,7 @@ export default function Exercise({ data }: { data: TExerciseData }) {
           const from = data.fromId == "SELF" ? processId : data.fromId;
           console.log("lua message :", message);
 
-          const passVal = (
-            message.From == from &&
-            (!data.validateTimestamp || valid) &&
-            (message.Data == (data.expectedResult as TExpectedResult).out ||
-              message.Data == codeResult)
-          )
+          const passVal = message.From == from && (!data.validateTimestamp || valid) && (message.Data == (data.expectedResult as TExpectedResult).out || message.Data == codeResult);
 
           setPassed(passVal);
         } catch {
@@ -238,31 +233,19 @@ export default function Exercise({ data }: { data: TExerciseData }) {
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel maxSize={45} minSize={15} className="p-3">
           <div className="text-center text-3xl p-4 pb-7">{data.title}</div>
-          <Markdown
-            className="markdown overflow-scroll max-h-[73vh]"
-            remarkPlugins={markdownPlugins}
-          >
+          <Markdown className="markdown overflow-scroll max-h-[73vh]" remarkPlugins={markdownPlugins}>
             {data.content}
           </Markdown>
           <div className="flex justify-between p-2 items-center">
-            <Button
-              variant="outline"
-              onClick={() => router.push(`/${data.prevRoute}`)}
-            >
+            <Button variant="outline" onClick={() => router.push(`/${data.prevRoute}`)}>
               Previous
             </Button>
             <Button
-              disabled={
-                typeof data.allowNext == "boolean" ? !data.allowNext : !passed
-              }
+              disabled={typeof data.allowNext == "boolean" ? !data.allowNext : !passed}
               variant="outline"
               onClick={() => {
-                const nextable =
-                  typeof data.allowNext == "boolean" ? data.allowNext : passed;
-                if (!nextable)
-                  return toast(
-                    "You need to complete the exercise to proceed :p",
-                  );
+                const nextable = typeof data.allowNext == "boolean" ? data.allowNext : passed;
+                if (!nextable) return toast("You need to complete the exercise to proceed :p");
                 router.push(`/${data.nextRoute}`);
               }}
             >
@@ -292,23 +275,13 @@ export default function Exercise({ data }: { data: TExerciseData }) {
             <ResizableHandle />
             <ResizablePanel maxSize={70} className="">
               <div className="flex justify-between items-center p-2">
-                <div className="px-2">
-                  Output {!running && !firstRun ? <>{passed ? "✅" : "❌"}</> : null}{" "}
-                </div>
+                <div className="px-2">Output {!running && !firstRun ? <>{passed ? "✅" : "❌"}</> : null} </div>
                 <Button variant="ghost" disabled={running} onClick={runCode}>
-                  {running ? (
-                    <ReloadIcon className="mr-2 animate-spin" />
-                  ) : (
-                    <PlayIcon className="mr-2" />
-                  )}
+                  {running ? <ReloadIcon className="mr-2 animate-spin" /> : <PlayIcon className="mr-2" />}
                   {confirming ? "Validating..." : <>{running ? "Running..." : "Run Code"}</>}
                 </Button>
               </div>
-              <pre
-                className={`ring-1 background-transparent p-1 px-2 ring-white/10 min-h-[10vh] max-h-[55vh] overflow-scroll ${passed ? "text-green-200" : "text-white"}`}
-              >
-                {typeof outputText == 'string' ? outputText : JSON.stringify(outputText, null, 2)}
-              </pre>
+              <pre className={`ring-1 background-transparent p-1 px-2 ring-white/10 min-h-[10vh] max-h-[55vh] overflow-scroll ${passed ? "text-green-200" : "text-white"}`}>{typeof outputText == "string" ? outputText : JSON.stringify(outputText, null, 2)}</pre>
             </ResizablePanel>
           </ResizablePanelGroup>
         </ResizablePanel>
