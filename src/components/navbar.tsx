@@ -1,21 +1,32 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "./ui/button";
 
 export default function Navbar() {
   return (
     <nav>
       <div className="flex flex-row justify-between items-center p-8">
-        <div className="flex flex-row items-center gap-2 text-lg">
+        <Link href="/" className="flex flex-row items-center gap-2 text-lg">
           <Image src="/logo.svg" height={16} width={16} alt="Logo" /> LearnAO
-        </div>
+        </Link>
 
         <div className="flex flex-row gap-4 text-[#2C2C2C] text-lg">
-          <Link href="/login">ide</Link>
+          <Link
+            href="https://betteridea.dev/"
+            target="_blank"
+            className="hover:text-[#bbb]"
+          >
+            ide
+          </Link>
           <span>•</span>
-          <Link href="/login">blogs</Link>
+          <Link href="/" className="hover:text-[#bbb]">
+            blogs
+          </Link>
         </div>
 
-        <div className="text-[#2C2C2C] text-lg">contact us</div>
+        <Link href="/" className="text-[#2C2C2C] text-lg hover:text-[#bbb]">
+          contact us
+        </Link>
       </div>
     </nav>
   );

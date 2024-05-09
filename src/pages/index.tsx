@@ -12,7 +12,16 @@ export default function Home() {
 
       <div className="container min-h-[calc(100vh-92px)] flex flex-col items-center  gap-3 p-3">
         <div className="max-w-screen-xl p-20 flex flex-col gap-12 justify-center items-center text-center">
-          <h1 className="text-7xl font-bold">Hands-on learning for everyone</h1>
+          <h1
+            className="text-7xl font-extrabold text-[#B8FFEE]"
+            style={{
+              WebkitTextStrokeWidth: "1px",
+              WebkitTextStrokeColor: "#000000",
+              textShadow: "1px 1px 0px #FFF",
+            }}
+          >
+            Hands-on learning for everyone
+          </h1>
 
           <div className="py-2 max-w-md text-[#3F3F3F]">
             Understand what ao offers, and crack Lua, all without a wallet

@@ -80,13 +80,13 @@
 }
 
 code {
-  background-color: rgba(69, 69, 69, 0.5);
-  padding: 0.1em 0.3em;
-  border-radius: 0.3em;
+  /* background-color: rgba(69, 69, 69, 0.5); */
+  /* padding: 0.1em 0.3em; */
+  /* border-radius: 0.3em; */
 }
 
 a {
   /* text-decoration: underline; */
   /* font-weight: 200; */
-  letter-spacing: 0.05em;
+  /* letter-spacing: 0.05em; */
 }
