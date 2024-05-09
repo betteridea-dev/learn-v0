@@ -10,7 +10,7 @@ export default function Home() {
     <>
       <Navbar />
 
-      <div className="container min-h-[calc(100vh-92px)] flex flex-col items-center justify-center gap-3 p-3">
+      <div className="container min-h-[calc(100vh-92px)] flex flex-col items-center  gap-3 p-3">
         <div className="max-w-screen-xl p-20 flex flex-col gap-12 justify-center items-center text-center">
           <h1 className="text-7xl font-bold">Hands-on learning for everyone</h1>
 
@@ -20,7 +20,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="h16"></div>
+        {/* <div className="h-16"></div> */}
 
         <div className="flex flex-row flex-wrap justify-center gap-2">
           {Object.keys(data).map((e: string, _) => (

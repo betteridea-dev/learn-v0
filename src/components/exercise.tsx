@@ -1,7 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 import { Separator } from "@/components/ui/separator";
 import { Module, Scheduler } from "@/lib/ao";
 import { TExerciseData, TExpectedResult } from "@/types";
@@ -15,6 +19,7 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { toast } from "sonner";
 import Ansi from "ansi-to-react";
+import { ScrollArea } from "./ui/scroll-area";
 
 declare global {
   interface Window {
@@ -60,7 +65,14 @@ export default function Exercise({ data }: { data: TExerciseData }) {
                 const isPrint = e.node.Output.print;
                 const d = e.node.Output.data;
                 // console.log(d);
-                isPrint && localStorage.getItem("cursor") && typeof d == "string" && toast(<Ansi className="bg-transparent p-1">{d.replace("34m", "37m")}</Ansi>);
+                isPrint &&
+                  localStorage.getItem("cursor") &&
+                  typeof d == "string" &&
+                  toast(
+                    <Ansi className="bg-transparent p-1">
+                      {d.replace("34m", "37m")}
+                    </Ansi>
+                  );
                 // if (!isPrint) {
                 //   try {
                 //     const messageData = e.node.Messages[0].Data;
@@ -73,7 +85,7 @@ export default function Exercise({ data }: { data: TExerciseData }) {
               window && localStorage.setItem("cursor", r.edges[0].cursor);
             }
           });
-      }, 2500),
+      }, 2500)
     );
     return () => clearInterval(intrvl);
   }, [processId]);
@@ -130,7 +142,8 @@ export default function Exercise({ data }: { data: TExerciseData }) {
 
   async function spawnProcess() {
     if (processId) return;
-    if (!address) return toast("Please connect wallet before spawning a process");
+    if (!address)
+      return toast("Please connect wallet before spawning a process");
     setSpawning(true);
     console.log("Spawning process...");
     const r = await connect().spawn({
@@ -171,7 +184,8 @@ export default function Exercise({ data }: { data: TExerciseData }) {
 
     console.log("code result:", Output);
 
-    const codeResult = Output.data.json == "undefined" ? Output.data.output : Output.data.json;
+    const codeResult =
+      Output.data.json == "undefined" ? Output.data.output : Output.data.json;
     setOutputText(codeResult);
     if (data.runLua) {
       setConfirming(true);
@@ -199,7 +213,11 @@ export default function Exercise({ data }: { data: TExerciseData }) {
           const from = data.fromId == "SELF" ? processId : data.fromId;
           console.log("lua message :", message);
 
-          const passVal = message.From == from && (!data.validateTimestamp || valid) && (message.Data == (data.expectedResult as TExpectedResult).out || message.Data == codeResult);
+          const passVal =
+            message.From == from &&
+            (!data.validateTimestamp || valid) &&
+            (message.Data == (data.expectedResult as TExpectedResult).out ||
+              message.Data == codeResult);
 
           setPassed(passVal);
         } catch {
@@ -216,72 +234,128 @@ export default function Exercise({ data }: { data: TExerciseData }) {
   }
 
   return (
-    <div className="h-screen flex flex-col">
-      <div className="p-2 px-3 flex justify-between items-center">
-        <Link href="/">Learn AO DAO</Link>
-        <div>
-          <Button variant="link" onClick={spawnProcess} disabled={spawning}>
-            {spawning ? <ReloadIcon className="mr-2 animate-spin" /> : null}
-            {processId ? processId : "Spawn Process"}
-          </Button>
-          <Button variant="link" onClick={connectWallet}>
-            {address ? address : "Connect"}
-          </Button>
-        </div>
+    <div className="h-[calc(100vh-92px)] container flex flex-col">
+      <div className="flex justify-between items-center">
+        <Button variant="ghost" onClick={spawnProcess} disabled={spawning}>
+          {spawning ? <ReloadIcon className="mr-2 animate-spin" /> : null}
+          {processId ? processId : "Spawn Process"}
+        </Button>
+
+        <Button variant="ghost" onClick={connectWallet}>
+          {address ? address : "Connect"}
+        </Button>
       </div>
-      <Separator />
-      <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel maxSize={45} minSize={15} className="p-3">
-          <div className="text-center text-3xl p-4 pb-7">{data.title}</div>
-          <Markdown className="markdown overflow-scroll max-h-[73vh]" remarkPlugins={markdownPlugins}>
-            {data.content}
-          </Markdown>
-          <div className="flex justify-between p-2 items-center">
-            <Button variant="outline" onClick={() => router.push(`/${data.prevRoute}`)}>
+
+      <Separator className="mt-2 mb-4" />
+
+      <ResizablePanelGroup
+        direction="horizontal"
+        className="flex h-full flex-grow"
+      >
+        <ResizablePanel
+          maxSize={45}
+          minSize={15}
+          className="flex p-8 pb-20 flex-col gap-4 justify-between"
+        >
+          <h2 className="text-2xl">{data.title}</h2>
+
+          <ScrollArea className="flex-grow">
+            <Markdown className="markdown" remarkPlugins={markdownPlugins}>
+              {data.content}
+            </Markdown>
+          </ScrollArea>
+
+          <div className="flex gap-4 p-2 items-center">
+            <Button
+              variant="outline"
+              onClick={() => router.push(`/${data.prevRoute}`)}
+              className="w-full"
+            >
               Previous
             </Button>
+
             <Button
-              disabled={typeof data.allowNext == "boolean" ? !data.allowNext : !passed}
-              variant="outline"
+              disabled={
+                typeof data.allowNext == "boolean" ? !data.allowNext : !passed
+              }
+              variant="default"
               onClick={() => {
-                const nextable = typeof data.allowNext == "boolean" ? data.allowNext : passed;
-                if (!nextable) return toast("You need to complete the exercise to proceed :p");
+                const nextable =
+                  typeof data.allowNext == "boolean" ? data.allowNext : passed;
+                if (!nextable)
+                  return toast(
+                    "You need to complete the exercise to proceed :p"
+                  );
                 router.push(`/${data.nextRoute}`);
               }}
+              className="w-full"
             >
               Next
             </Button>
           </div>
         </ResizablePanel>
-        <ResizableHandle />
+
+        <ResizableHandle className="mx-8" />
+
         <ResizablePanel>
           <ResizablePanelGroup direction="vertical">
-            <ResizablePanel maxSize={80} className="p-0">
-              <div className="p-2 px-4">LUA Editor</div>
-              <Editor
-                language="lua"
-                theme="vs-dark"
-                options={{
-                  minimap: { enabled: false },
-                  fontSize: 16,
-                  wordWrap: "on",
-                  scrollBeyondLastLine: false,
-                }}
-                value={currentCode}
-                defaultValue={data.defaultCode}
-                onChange={(v) => v && setCurrentCode(v)}
-              />
-            </ResizablePanel>
-            <ResizableHandle />
-            <ResizablePanel maxSize={70} className="">
-              <div className="flex justify-between items-center p-2">
-                <div className="px-2">Output {!running && !firstRun ? <>{passed ? "✅" : "❌"}</> : null} </div>
-                <Button variant="ghost" disabled={running} onClick={runCode}>
-                  {running ? <ReloadIcon className="mr-2 animate-spin" /> : <PlayIcon className="mr-2" />}
-                  {confirming ? "Validating..." : <>{running ? "Running..." : "Run Code"}</>}
+            <ResizablePanel maxSize={80} className="flex flex-col gap-4">
+              <div className="flex flex-row gap-4 justify-between items-center">
+                <h3 className="text-xl">
+                  Code{" "}
+                  <span className="ml-2 text-lg text-[#555]">Lua editor</span>
+                </h3>
+
+                <Button variant="default" disabled={running} onClick={runCode}>
+                  {running ? (
+                    <ReloadIcon className="mr-2 animate-spin fill-black" />
+                  ) : (
+                    <PlayIcon className="mr-2" />
+                  )}
+                  {confirming ? (
+                    "Validating..."
+                  ) : (
+                    <>{running ? "Running..." : "Run Code"}</>
+                  )}
                 </Button>
               </div>
-              <pre className={`ring-1 background-transparent p-1 px-2 ring-white/10 min-h-[10vh] max-h-[55vh] overflow-scroll ${passed ? "text-green-200" : "text-white"}`}>{typeof outputText == "string" ? outputText : JSON.stringify(outputText, null, 2)}</pre>
+
+              <div className="h-full w-full rounded-xl overflow-hidden">
+                <Editor
+                  language="lua"
+                  theme="vs-dark"
+                  options={{
+                    minimap: { enabled: false },
+                    fontSize: 16,
+                    wordWrap: "on",
+                    scrollBeyondLastLine: false,
+                  }}
+                  value={currentCode}
+                  defaultValue={data.defaultCode}
+                  onChange={(v) => v && setCurrentCode(v)}
+                />
+              </div>
+            </ResizablePanel>
+
+            <ResizableHandle className="my-6" />
+
+            <ResizablePanel maxSize={70} className="flex flex-col gap-4 pb-20">
+              <div className="text-xl">
+                Output{" "}
+                {!running && !firstRun ? <>{passed ? "✅" : "❌"}</> : null}{" "}
+              </div>
+
+              <ScrollArea className="bg-[#1e1e1e] rounded-xl max-h-full min-h-[10vh]">
+                <pre
+                  className={`px-4 py-2 rounded-xl ${
+                    passed ? "text-green-200" : "text-white"
+                  }`}
+                >
+                  {typeof outputText == "string"
+                    ? "... \n".repeat(1)
+                    : JSON.stringify(outputText, null, 2)}
+                </pre>
+              </ScrollArea>
             </ResizablePanel>
           </ResizablePanelGroup>
         </ResizablePanel>

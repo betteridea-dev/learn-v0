@@ -4,9 +4,19 @@ import data from "@/data";
 import Exercise from "@/components/exercise";
 import { TExerciseData } from "@/types";
 import { GetStaticPathsContext, GetStaticPropsContext } from "next";
+import Navbar from "@/components/navbar";
 
-export default function ExercisePage({ excercise }: { excercise: TExerciseData }) {
-  return <Exercise data={excercise} />;
+export default function ExercisePage({
+  excercise,
+}: {
+  excercise: TExerciseData;
+}) {
+  return (
+    <>
+      <Navbar />
+      <Exercise data={excercise} />
+    </>
+  );
 }
 
 export async function getStaticPaths(context: GetStaticPathsContext) {
