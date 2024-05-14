@@ -39,7 +39,7 @@ You can either copy and paste the process ID as a string or use the global varia
   Data = "Hello World!"
 })`,
   expectedResult: {
-    run: `Inbox[#Inbox]`,
+    run: `return require("json").encode(Inbox[#Inbox])`,
     out: "Hello World!",
   },
   runLua: true,

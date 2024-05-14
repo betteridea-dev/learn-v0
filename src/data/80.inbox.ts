@@ -26,7 +26,7 @@ Your task is to check your inbox and print the latest message Data.
 
 `,
   defaultCode: `Inbox`,
-  expectedResult: { run: `Inbox[#Inbox]` },
+  expectedResult: { run: `Inbox[#Inbox].Data` },
   runLua: true,
   fromId: "SELF",
   validateTimestamp: false,
