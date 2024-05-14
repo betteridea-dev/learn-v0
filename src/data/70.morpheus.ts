@@ -4,7 +4,7 @@ export default {
   prevRoute: "60-messaging",
   route: "70-morpheus",
   nextRoute: "80-my-inbox",
-  title: "Reb pill or blue pill? 💊",
+  title: "Red pill or blue pill? 💊",
   content: `
 
 *"This is your last chance. After this, there is no turning back. You take the blue pill -

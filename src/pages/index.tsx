@@ -8,6 +8,7 @@ export default function Home() {
 
   return (
     <>
+      <title>LearnAO | Home</title>
       <Navbar />
 
       <div className="container min-h-[calc(100vh-92px)] flex flex-col items-center  gap-3 p-3">

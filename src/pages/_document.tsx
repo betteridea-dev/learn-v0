@@ -18,7 +18,6 @@ export default function Document() {
         <link rel="icon" href="/favicon.ico" />
         <link rel="icon" href="/icon.svg" type="image/svg" />
         <link rel="apple-touch-icon" href="/apple-icon.png" type="image/png" />
-        <title>LearnAO | Home</title>
       </Head>
       <body>
         <Main />

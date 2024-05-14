@@ -13,6 +13,7 @@ export default function ExercisePage({
 }) {
   return (
     <>
+      <title suppressHydrationWarning>Learn AO | {excercise.title}</title>
       <Navbar />
       <Exercise data={excercise} />
     </>
