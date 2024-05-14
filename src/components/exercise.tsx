@@ -312,11 +312,11 @@ export default function Exercise({ data }: { data: TExerciseData }) {
       <div className="flex justify-between items-center">
         <Button variant="ghost" onClick={spawnProcessHandler} disabled={spawning}>
           {spawning ? <ReloadIcon className="mr-2 animate-spin" /> : null}
-          {processId ? `PID: ${processId}` : "Spawn Process"}
+          {processId ? `PID: ${processId}` : "Load Process"}
         </Button>
 
         <Button variant="ghost" onClick={connectWallet}>
-          {address ? "Signed In" : "Sign in"}
+          {address ? `Connected: ${address.substring(0, 4)}...${address.substring(address.length - 4, address.length)}` : "Sign in"}
         </Button>
       </div>
 

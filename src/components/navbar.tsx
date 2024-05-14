@@ -7,12 +7,12 @@ export default function Navbar() {
     <nav>
       <div className="flex flex-row justify-between items-center p-8">
         <Link href="/" className="flex flex-row items-center gap-2 text-lg">
-          <Image src="/logo.svg" height={16} width={16} alt="Logo" /> LearnAO
+          <Image src="/icon.svg" height={16} width={16} alt="Logo" /> LearnAO
         </Link>
 
         <div className="flex flex-row gap-4 text-[#2C2C2C] text-lg">
           <Link
-            href="https://betteridea.dev/"
+            href="https://ide.betteridea.dev/"
             target="_blank"
             className="hover:text-[#bbb]"
           >
@@ -24,7 +24,7 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <Link href="/" className="text-[#2C2C2C] text-lg hover:text-[#bbb]">
+        <Link href="https://discord.gg/nm6VKUQBrA" target="_blank" className="text-[#2C2C2C] text-lg hover:text-[#bbb]">
           contact us
         </Link>
       </div>
