@@ -24,7 +24,11 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <Link href="https://discord.gg/nm6VKUQBrA" target="_blank" className="text-[#2C2C2C] text-lg hover:text-[#bbb]">
+        <Link
+          href="https://discord.gg/nm6VKUQBrA"
+          target="_blank"
+          className="text-[#2C2C2C] text-lg hover:text-[#bbb]"
+        >
           contact us
         </Link>
       </div>
