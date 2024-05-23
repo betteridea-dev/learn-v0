@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/components/navbar";
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   const router = useRouter();
@@ -90,6 +91,24 @@ export default function Home() {
           className="absolute bottom-0 left-[16%]"
         />
       </div>
+
+      <section className="bg-[#D2FFFA] text-[#454545] py-24">
+        <div className="relative container">
+          <div className="flex flex-row flex-wrap justify-center gap-2">
+            {Object.keys(data).map((e: string, _) => (
+              <Link href={`/${data[e].route}`} className="">
+                <div
+                  key={_}
+                  className="w-[269px] h-full font-mono p-10 relative border border-[#008A79] rounded-md cursor-pointer hover:bg-gray-100"
+                >
+                  <div className="absolute top-2 left-3">{_ + 1}</div>
+                  {data[e].title}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* <div className="h-16"></div> */}
 
