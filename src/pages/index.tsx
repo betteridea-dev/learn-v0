@@ -2,38 +2,98 @@ import data from "@/data";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/navbar";
+import Head from "next/head";
+import Image from "next/image";
 
 export default function Home() {
   const router = useRouter();
 
   return (
     <>
-      <title>LearnAO | Home</title>
+      <Head>
+        <title>LearnAO | Home</title>
+      </Head>
 
-      <Navbar />
+      {/* <Navbar /> */}
+      {/* min-h-[calc(100vh-92px)] */}
 
-      <div className="container min-h-[calc(100vh-92px)] flex flex-col items-center  gap-3 p-3">
-        <div className="max-w-screen-xl p-20 flex flex-col gap-12 justify-center items-center text-center">
-          <h1
-            className="text-7xl font-extrabold text-[#B8FFEE]"
-            style={{
-              WebkitTextStrokeWidth: "1px",
-              WebkitTextStrokeColor: "#000000",
-              textShadow: "1px 1px 0px #FFF",
-            }}
-          >
-            Hands-on learning for everyone
-          </h1>
+      <div className="min-h-[85vh] flex flex-col items-center justify-center bg-[#D2FFFA] text-[#008A79]">
+        <Image
+          src="/images/cloud.svg"
+          height={50}
+          width={350}
+          alt=""
+          className="absolute top-[10%] left-0"
+        />
 
-          <div className="py-2 max-w-md text-[#3F3F3F]">
-            Understand what ao offers, and crack Lua, all without a wallet
-            connection.
-          </div>
+        <Image
+          src="/images/sun.svg"
+          height={106}
+          width={215}
+          alt=""
+          className="absolute top-[10%] right-[5%]"
+        />
+
+        <div className="flex flex-col gap-2 items-center">
+          <p className="py-2">Learn and build on ao, easy breezy</p>
+
+          <h1 className="text-[160px] font-extrabold font-heading">learn ao</h1>
+
+          <Button>Begin learning</Button>
         </div>
 
-        {/* <div className="h-16"></div> */}
+        {/* <div className="h-[200px]"></div> */}
 
-        <div className="flex flex-row flex-wrap justify-center gap-2">
+        <Image
+          src="/images/hero-bottom-left.svg"
+          height={233}
+          width={750}
+          alt=""
+          className="absolute bottom-[15vh] left-0"
+        />
+
+        <Image
+          src="/images/hero-bottom-right.svg"
+          height={291}
+          width={221}
+          alt=""
+          className="absolute bottom-[calc(15vh-1px)] right-0"
+        />
+      </div>
+
+      <div className="relative min-h-screen flex flex-col items-center gap-8 justify-center bg-[#008A79] text-[#D2FFFA]">
+        <h3 className="text-3xl font-heading">Get started with basics. </h3>
+
+        <div
+          className="flex flex-row gap-4 max-w-screen-md bg-[#B2FFF6] p-4 rounded-md"
+          style={{
+            border: "2px solid #003C35",
+            boxShadow: "0px 4px 0px 0px #003C35",
+          }}
+        >
+          <div className="w-[494px] h-[380px] bg-[#003C35]"></div>
+          <div className="w-[246px] h-[380px]"></div>
+        </div>
+
+        <Image
+          src="/images/cattus.svg"
+          height={124}
+          width={52}
+          alt=""
+          className="absolute bottom-0 left-[8%]"
+        />
+        <Image
+          src="/images/cattus.svg"
+          height={62}
+          width={26}
+          alt=""
+          className="absolute bottom-0 left-[16%]"
+        />
+      </div>
+
+      {/* <div className="h-16"></div> */}
+
+      {/* <div className="flex flex-row flex-wrap justify-center gap-2">
           {Object.keys(data).map((e: string, _) => (
             <Button
               key={_}
@@ -45,8 +105,7 @@ export default function Home() {
               {data[e].title}
             </Button>
           ))}
-        </div>
-      </div>
+        </div> */}
     </>
   );
 }
