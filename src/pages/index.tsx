@@ -5,26 +5,68 @@ import Navbar from "@/components/navbar";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import { Toaster } from "@/components/ui/toaster"
+import othentLogo from "@/assets/othent.png"
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast"
+import { DiscordLogoIcon, TwitterLogoIcon } from "@radix-ui/react-icons";
 
 export default function Home() {
-  const router = useRouter();
+  const { toast } = useToast()
+
+  function joinWaitlist() {
+    const email = (document.getElementById("email") as HTMLInputElement).value;
+    console.log(email);
+    // validate email
+    if (email === "") {
+      return toast({ title: "Please enter an email address" })
+    }
+    // check string is an email
+    const regex = /\S+@\S+\.\S+/;
+    if (!regex.test(email)) {
+      return toast({ title: "Please enter a valid email address" })
+    }
+
+    fetch('https://sheetdb.io/api/v1/2pxxi2846am8j', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        data: [
+          {
+            'email': email,
+          }
+        ]
+      })
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        toast({ title: "Successfully joined waitlist", description: "We will notify you as soon as we launch" })
+      });
+
+  }
 
   return (
     <>
       <Head>
         <title>LearnAO | Home</title>
       </Head>
+      <Toaster />
+
 
       {/* <Navbar /> */}
       {/* min-h-[calc(100vh-92px)] */}
 
-      <div className="min-h-[85vh] flex flex-col items-center justify-center bg-[#D2FFFA] text-[#008A79]">
+      <div className="h-screen flex flex-col items-center justify-center bg-[#D2FFFA] text-[#008A79]">
         <Image
           src="/images/cloud.svg"
           height={50}
           width={350}
           alt=""
-          className="absolute top-[10%] left-0"
+          className="absolute top-[10%] left-0 w-1/3 max-w-[350px]"
         />
 
         <Image
@@ -32,15 +74,37 @@ export default function Home() {
           height={106}
           width={215}
           alt=""
-          className="absolute top-[10%] right-[5%]"
+          className="absolute top-[10%] right-[5%] w-1/3 max-w-[215px]"
         />
 
         <div className="flex flex-col gap-2 items-center">
-          <p className="py-2">Learn and build on ao, easy breezy</p>
+          <p className="py-2 text-md md:text-xl">Learn and build on ao, easy breezy</p>
 
-          <h1 className="text-[160px] font-extrabold font-heading">learn ao</h1>
+          <div className="text-7xl md:text-9xl font-extrabold font-heading drop-shadow-lg">Learn AO</div>
+          <p className="py-2 text-md md:text-xl">Launching soon</p>
 
-          <Button>Begin learning</Button>
+          {/* <Button size="lg">Connect
+            <Image src={othentLogo} width={35} height={35} alt="othent" className="ml-1.5" />
+          </Button> */}
+          {/* <Button size="lg">Start learning</Button> */}
+          <div className="flex gap-2 w-full mx-auto p-1 items-center justify-center">
+            <Input placeholder="Email address" id="email" type="email" className="block bg-white text-black z-20 w-[60%]" />
+            <Button className="z-10 text-[#D2FFFA] bg-[#008A79] hover:-translate-y-1 hover:shadow-lg active:translate-y-1 transition-all duration-250" onClick={joinWaitlist}>Join waitlist</Button>
+          </div>
+
+          <div className="absolute left-2 top-2 flex gap-2">
+            <Link href="https://discord.gg/nm6VKUQBrA" target="_blank" className=" cursor-pointer z-50">
+              <div className="flex gap-2 items-center text-[#008A79] z-50 drop-shadow-lg justify-left font-bold">
+                <DiscordLogoIcon className="w-8 h-8" /><div>Join Discord</div>
+              </div>
+            </Link>
+            <Link href="https://twitter.com/betteridea_dev" target="_blank" className=" cursor-pointer z-50 font-bold">
+              <div className="flex gap-2 items-center drop-shadow-lg text-[#008A79] z-50 justify-center">
+                <TwitterLogoIcon className="w-8 h-8" />
+                <div>By BetterIDEa Team</div>
+              </div>
+            </Link>
+          </div>
         </div>
 
         {/* <div className="h-[200px]"></div> */}
@@ -50,7 +114,7 @@ export default function Home() {
           height={233}
           width={750}
           alt=""
-          className="absolute bottom-[15vh] left-0"
+          className="absolute bottom-0 left-0"
         />
 
         <Image
@@ -58,11 +122,11 @@ export default function Home() {
           height={291}
           width={221}
           alt=""
-          className="absolute bottom-[calc(15vh-1px)] right-0"
+          className="absolute bottom-0 right-0"
         />
       </div>
 
-      <div className="relative min-h-screen flex flex-col items-center gap-8 justify-center bg-[#008A79] text-[#D2FFFA]">
+      {/* <div className="relative min-h-screen flex flex-col items-center gap-8 justify-center bg-[#008A79] text-[#D2FFFA]">
         <h3 className="text-3xl font-heading">Get started with basics. </h3>
 
         <div
@@ -90,9 +154,9 @@ export default function Home() {
           alt=""
           className="absolute bottom-0 left-[16%]"
         />
-      </div>
+      </div> */}
 
-      <section className="bg-[#D2FFFA] text-[#454545] py-24">
+      {/* <section className="bg-[#D2FFFA] text-[#454545] py-24">
         <div className="relative container">
           <div className="flex flex-row flex-wrap justify-center gap-2">
             {Object.keys(data).map((e: string, _) => (
@@ -108,7 +172,7 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* <div className="h-16"></div> */}
 
