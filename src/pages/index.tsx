@@ -10,6 +10,7 @@ import othentLogo from "@/assets/othent.png"
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast"
 import { DiscordLogoIcon, TwitterLogoIcon } from "@radix-ui/react-icons";
+import learnAOSVG from "@/assets/learn-ao.svg"
 
 export default function Home() {
   const { toast } = useToast()
@@ -61,15 +62,15 @@ export default function Home() {
       {/* min-h-[calc(100vh-92px)] */}
 
       <div className="h-screen flex flex-col items-center justify-center bg-[#D2FFFA] text-[#008A79]">
-        <Image
+        <Image draggable={false}
           src="/images/cloud.svg"
           height={50}
           width={350}
           alt=""
-          className="absolute top-[10%] left-0 w-1/3 max-w-[350px]"
+          className="absolute top-[10%] left-0 w-1/3 max-w-[350px] animate-left-right"
         />
 
-        <Image
+        <Image draggable={false}
           src="/images/sun.svg"
           height={106}
           width={215}
@@ -80,7 +81,8 @@ export default function Home() {
         <div className="flex flex-col gap-2 items-center">
           <p className="py-2 text-md md:text-xl">Learn and build on ao, easy breezy</p>
 
-          <div className="text-7xl md:text-9xl font-extrabold font-heading drop-shadow-lg">Learn AO</div>
+          {/* <div className="text-7xl md:text-9xl font-extrabold font-heading drop-shadow-lg">Learn AO</div> */}
+          <Image src={learnAOSVG} draggable={false} width={600} height={300} alt="Learn AO" className="drop-shadow-lg px-2" />
           <p className="py-2 text-md md:text-xl">Launching soon</p>
 
           {/* <Button size="lg">Connect
@@ -89,27 +91,29 @@ export default function Home() {
           {/* <Button size="lg">Start learning</Button> */}
           <div className="flex gap-2 w-full mx-auto p-1 items-center justify-center">
             <Input placeholder="Email address" id="email" type="email" className="block bg-white text-black z-20 w-[60%]" />
-            <Button className="z-10 text-[#D2FFFA] bg-[#008A79] hover:-translate-y-1 hover:shadow-lg active:translate-y-1 transition-all duration-250" onClick={joinWaitlist}>Join waitlist</Button>
           </div>
+          <Button className="z-10 text-[#D2FFFA] bg-[#008A79] hover:-translate-y-1 hover:shadow-lg active:translate-y-1 transition-all duration-250 animate-bounce" onClick={joinWaitlist}>Join waitlist</Button>
 
-          <div className="absolute left-2 top-2 flex gap-2">
+          <div className="absolute left-3 top-3 flex gap-2.5">
             <Link href="https://discord.gg/nm6VKUQBrA" target="_blank" className=" cursor-pointer z-50">
-              <div className="flex gap-2 items-center text-[#008A79] z-50 drop-shadow-lg justify-left font-bold">
-                <DiscordLogoIcon className="w-8 h-8" /><div>Join Discord</div>
+              <div className="flex gap-2 items-center z-50 drop-shadow-lg justify-left font-bold">
+                <DiscordLogoIcon className="w-10 h-10 bg-[#008A79] rounded-md text-[#D2FFFA] p-1" />
               </div>
             </Link>
             <Link href="https://twitter.com/betteridea_dev" target="_blank" className=" cursor-pointer z-50 font-bold">
-              <div className="flex gap-2 items-center drop-shadow-lg text-[#008A79] z-50 justify-center">
-                <TwitterLogoIcon className="w-8 h-8" />
-                <div>By BetterIDEa Team</div>
+              <div className="flex gap-2 items-center drop-shadow-lg z-50 justify-center">
+                <TwitterLogoIcon className="w-10 h-10 bg-[#008A79] rounded-md text-[#D2FFFA] p-1" />
               </div>
             </Link>
           </div>
+          <Link href="https://ide.betteridea.dev" target="_blank" className="absolute mx-auto bottom-5 z-30">
+            <Button className="z-30 bg-[#008A79] text-[#D2FFFA]" size="sm">Powered By BetterIDEa</Button>
+          </Link>
         </div>
 
         {/* <div className="h-[200px]"></div> */}
 
-        <Image
+        <Image draggable={false}
           src="/images/hero-bottom-left.svg"
           height={233}
           width={750}
@@ -117,7 +121,7 @@ export default function Home() {
           className="absolute bottom-0 left-0"
         />
 
-        <Image
+        <Image draggable={false}
           src="/images/hero-bottom-right.svg"
           height={291}
           width={221}

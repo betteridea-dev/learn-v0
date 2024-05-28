@@ -70,12 +70,13 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
 
-.markdown > * {
+.markdown>* {
   all: revert;
 }
 
@@ -89,4 +90,21 @@ a {
   /* text-decoration: underline; */
   /* font-weight: 200; */
   /* letter-spacing: 0.05em; */
+}
+
+.animate-left-right {
+  animation: left-right 5s ease-in-out infinite;
+}
+
+@keyframes left-right {
+
+  /* move left then back to start */
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(-4%);
+  }
 }
