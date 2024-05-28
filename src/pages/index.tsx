@@ -154,7 +154,7 @@ export default function Home() {
 
         <Button variant="link" className="z-40 bg-transparent drop-shadow-lg absolute bottom-5 right-5 p-0 h-16" onClick={() => {
           // sonnerToast.custom(() => <Image draggable={false} src={popupSVG} width={800} height={300} alt="popup" className="bg-black" />)
-          sonnerToast.custom(() => <div className="rounded-lg p-2 bg-[#B2FFF6] border-2 border-[#003C35]">
+          sonnerToast.custom(() => <div className="rounded-lg p-2 bg-[#B2FFF6] border-2 border-[#003C35] text-[#003C35]">
 
             We're launching our courses soon.<br />
             The first 3 people to finish the courses get 1AR each
