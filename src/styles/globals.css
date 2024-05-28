@@ -2,6 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'K-Future';
+  src: url('/k-future.otf');
+}
+
+@font-face {
+  font-family: 'K-Suture';
+  src: url('/k-suture.otf');
+}
+
+@font-face {
+  font-family: 'SpaceGrotesk';
+  src: url('/SpaceGrotesk.ttf');
+}
+
+.font-k-future {
+  font-family: 'K-Future', sans-serif;
+}
+
+.font-k-suture {
+  font-family: 'K-Suture', sans-serif;
+}
+
+* {
+  font-family: "SpaceGrotesk", sans-serif;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

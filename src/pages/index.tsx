@@ -79,9 +79,9 @@ export default function Home() {
         />
 
         <div className="flex flex-col gap-2 items-center">
-          <p className="py-2 text-md md:text-xl">Learn and build on ao, easy breezy</p>
+          <p className="py-2 text-md md:text-xl text-[#8F8F8F]">Learn and build on ao, easy breezy</p>
 
-          {/* <div className="text-7xl md:text-9xl font-extrabold font-heading drop-shadow-lg">Learn AO</div> */}
+          {/* <div className="text-7xl md:text-9xl font-extrabold font-k-future drop-shadow-lg">learn ao</div> */}
           <Image src={learnAOSVG} draggable={false} width={600} height={300} alt="Learn AO" className="drop-shadow-lg px-2" />
           <p className="py-2 text-md md:text-xl">Launching soon</p>
 
@@ -89,10 +89,10 @@ export default function Home() {
             <Image src={othentLogo} width={35} height={35} alt="othent" className="ml-1.5" />
           </Button> */}
           {/* <Button size="lg">Start learning</Button> */}
-          <div className="flex gap-2 w-full mx-auto p-1 items-center justify-center">
-            <Input placeholder="Email address" id="email" type="email" className="block bg-white text-black z-20 w-[60%]" />
+          <div className="flex flex-col md:flex-row gap-3 md:gap-2 w-full mx-auto p-1 items-center justify-center">
+            <Input placeholder="Email address" id="email" type="email" className="block bg-white text-black z-20 w-[80%] md:w-[60%]" />
+            <Button className="w-[80%] md:w-fit text-[#D2FFFA] bg-[#008A79] hover:-translate-y-1 hover:shadow-lg active:translate-y-1 transition-all duration-250 z-50" onClick={joinWaitlist}>Join waitlist</Button>
           </div>
-          <Button className="z-10 text-[#D2FFFA] bg-[#008A79] hover:-translate-y-1 hover:shadow-lg active:translate-y-1 transition-all duration-250 animate-bounce" onClick={joinWaitlist}>Join waitlist</Button>
 
           <div className="absolute left-3 top-3 flex gap-2.5">
             <Link href="https://discord.gg/nm6VKUQBrA" target="_blank" className=" cursor-pointer z-50">
@@ -106,7 +106,7 @@ export default function Home() {
               </div>
             </Link>
           </div>
-          <Link href="https://ide.betteridea.dev" target="_blank" className="absolute mx-auto bottom-5 z-30">
+          <Link href="https://ide.betteridea.dev" target="_blank" className="absolute mx-auto bottom-5 z-30 animate-bounce">
             <Button className="z-30 bg-[#008A79] text-[#D2FFFA]" size="sm">Powered By BetterIDEa</Button>
           </Link>
         </div>
