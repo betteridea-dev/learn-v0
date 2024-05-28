@@ -5,27 +5,40 @@ import Navbar from "@/components/navbar";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { Toaster } from "@/components/ui/toaster"
+// import { Toaster } from "@/components/ui/toaster"
+import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import othentLogo from "@/assets/othent.png"
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast"
+// import { useToast } from "@/components/ui/use-toast"
+import { toast as sonnerToast, toast } from "sonner"
 import { DiscordLogoIcon, TwitterLogoIcon } from "@radix-ui/react-icons";
 import learnAOSVG from "@/assets/learn-ao.svg"
+import sneakPeekSVG from "@/assets/sneak-peek.svg"
+
+import sp1SVG from "@/assets/1.svg"
+import sp2SVG from "@/assets/2.svg"
+import sp3SVG from "@/assets/3.svg"
+
+import cactiSVG from "@/assets/cactii.svg"
+import andaSVG from "@/assets/anda.svg"
+import popupSVG from "@/assets/popup.svg"
 
 export default function Home() {
-  const { toast } = useToast()
+  // const { toast } = useToast()
 
   function joinWaitlist() {
     const email = (document.getElementById("email") as HTMLInputElement).value;
     console.log(email);
     // validate email
     if (email === "") {
-      return toast({ title: "Please enter an email address" })
+      // return toast({ title: "Please enter an email address" })
+      return toast.error("Please enter an email address")
     }
     // check string is an email
     const regex = /\S+@\S+\.\S+/;
     if (!regex.test(email)) {
-      return toast({ title: "Please enter a valid email address" })
+      // return toast({ title: "Please enter a valid email address" })
+      return toast.error("Please enter a valid email address")
     }
 
     fetch('https://sheetdb.io/api/v1/2pxxi2846am8j', {
@@ -45,7 +58,8 @@ export default function Home() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        toast({ title: "Successfully joined waitlist", description: "We will notify you as soon as we launch" })
+        // toast({ title: "Successfully joined waitlist", description: "We will notify you as soon as we launch" })
+        toast.success("Successfully joined waitlist.\nWe will notify you as soon as we launch")
       });
 
   }
@@ -55,13 +69,14 @@ export default function Home() {
       <Head>
         <title>LearnAO | Home</title>
       </Head>
-      <Toaster />
+      {/* <Toaster /> */}
+      <SonnerToaster className="bg-transparent" />
 
 
       {/* <Navbar /> */}
       {/* min-h-[calc(100vh-92px)] */}
 
-      <div className="h-screen flex flex-col items-center justify-center bg-[#D2FFFA] text-[#008A79]">
+      <div className="h-screen flex flex-col items-center justify-center bg-[#D2FFFA] text-[#008A79] pb-0 mb-0">
         <Image draggable={false}
           src="/images/cloud.svg"
           height={50}
@@ -126,8 +141,33 @@ export default function Home() {
           height={291}
           width={221}
           alt=""
-          className="absolute bottom-0 right-0"
+          className="absolute -bottom-0.5 right-0"
         />
+      </div>
+
+      <div className="min-h-[100vh] py-20 bg-[#008A79] relative flex flex-col items-center justify-center gap-5">
+        <Image draggable={false} src={sneakPeekSVG} width={250} height={100} alt="Sneak Peek" className="drop-shadow-lg px-2 mb-5" />
+
+        <Image draggable={false} src={sp1SVG} width={700} height={450} alt="Sneak Peek" className="drop-shadow-lg px-2 z-30" />
+        <Image draggable={false} src={sp2SVG} width={700} height={450} alt="Sneak Peek" className="drop-shadow-lg px-2 z-30" />
+        <Image draggable={false} src={sp3SVG} width={700} height={450} alt="Sneak Peek" className="drop-shadow-lg px-2 z-30" />
+
+        <Button variant="link" className="z-40 bg-transparent drop-shadow-lg absolute bottom-5 right-5 p-0 h-16" onClick={() => {
+          // sonnerToast.custom(() => <Image draggable={false} src={popupSVG} width={800} height={300} alt="popup" className="bg-black" />)
+          sonnerToast.custom(() => <div className="rounded-lg p-2 bg-[#B2FFF6] border-2 border-[#003C35]">
+
+            We're launching our courses soon.<br />
+            The first 3 people to finish the courses get 1AR each
+            {/* <Image draggable={false} src={popupSVG} width={800} height={300} alt="popup" onClick={() => sonnerToast.dismiss()} /> */}
+          </div>)
+        }}>
+          <Image draggable={false} src={andaSVG} width={60} height={60} alt="easter egg" />
+        </Button>
+
+        <Image draggable={false} src={cactiSVG} width={140} height={140} alt="cacti" className="absolute bottom-0 left-0 z-20" />
+
+        <div className="absolute bottom-0 z-0 w-full bg-[#D2FFFA] h-10">
+        </div>
       </div>
 
       {/* <div className="relative min-h-screen flex flex-col items-center gap-8 justify-center bg-[#008A79] text-[#D2FFFA]">
