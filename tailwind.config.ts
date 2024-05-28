@@ -19,8 +19,8 @@ const config = {
     },
     extend: {
       fontFamily: {
-        sans: ["Space Grotesk", "sans-serif"],
-        heading: ["Karma", "serif"],
+        // sans: ["Space Grotesk", "sans-serif"],
+        // heading: ["Karma", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",
