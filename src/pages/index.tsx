@@ -172,7 +172,7 @@ export default function Home() {
               <div className="rounded-lg p-2 bg-[#B2FFF6] border-2 border-[#003C35] text-[#003C35]">
                 We're launching our courses soon.
                 <br />
-                The first 3 people to finish the courses get 1AR each
+                The first 5 people to finish the courses get 1AR each
                 {/* <Image draggable={false} src={popupSVG} width={800} height={300} alt="popup" onClick={() => sonnerToast.dismiss()} /> */}
               </div>
             ));
